@@ -1,0 +1,45 @@
+# eco-shapes.ttl — SHACL shapes: the self-description contracts as machine checks.
+#
+# These are the INVARIANTS that must always hold (sh:Violation). The A2A-card
+# expectation from Stage 0 is deliberately NOT a hard shape here — OpenAPI is a
+# valid alternative today, so "advertises an A2A card?" stays an advisory query
+# (0-enroll-completeness.rq), not a conformance error.
+
+@prefix eco:  <https://la3d-llm-agents.github.io/ns/eco#> .
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+# A bundle is only reachable if it advertises a clone endpoint (the ask target).
+eco:BundleShape a sh:NodeShape ;
+    sh:targetClass eco:Bundle ;
+    sh:property [
+        sh:path eco:hasService ;
+        sh:qualifiedValueShape [ sh:class eco:CloneEndpoint ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:message "A bundle must advertise a clone endpoint (the ask target)." ;
+    ] .
+
+# A capability is untrustworthy to consume unless it declares maturity and provider.
+eco:CapabilityShape a sh:NodeShape ;
+    sh:targetClass eco:Capability ;
+    sh:property [
+        sh:path eco:hasMaturity ; sh:minCount 1 ; sh:class eco:Maturity ;
+        sh:message "A capability must declare its maturity." ;
+    ] ;
+    sh:property [
+        sh:path eco:providedBy ; sh:minCount 1 ;
+        sh:message "A capability must declare its provider." ;
+    ] .
+
+# An answer is unauditable unless attributed and provenance-linked (the flyer's
+# "attributed to a person and the agent that wrote it").
+eco:AnswerShape a sh:NodeShape ;
+    sh:targetClass eco:Answer ;
+    sh:property [
+        sh:path prov:wasAttributedTo ; sh:minCount 1 ;
+        sh:message "An answer must be attributed (person and/or agent)." ;
+    ] ;
+    sh:property [
+        sh:path prov:wasDerivedFrom ; sh:minCount 1 ;
+        sh:message "An answer must record its provenance." ;
+    ] .
