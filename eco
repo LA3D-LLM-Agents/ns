@@ -81,6 +81,12 @@ eco:Maturity        a owl:Class ; rdfs:subClassOf skos:Concept ; rdfs:label "Mat
 eco:Visibility      a owl:Class ; rdfs:subClassOf skos:Concept ; rdfs:label "Visibility" .
 eco:ConsumptionMode a owl:Class ; rdfs:subClassOf skos:Concept ; rdfs:label "Consumption mode" .
 
+# Layer 3 — VC-gated consumption.
+eco:CredentialIssuer a owl:Class ; rdfs:subClassOf eco:Participant ; rdfs:label "Credential issuer" ;
+    rdfs:comment "A group/lab that issues Verifiable Credentials authorizing consumption of gated resources." .
+eco:CredentialRequirement a owl:Class ; rdfs:label "Credential requirement" ;
+    rdfs:comment "The gate on a restricted resource: a scope a presented VC must grant, plus the issuer(s) trusted to grant it." .
+
 ########################################################################
 ## Properties
 ########################################################################
@@ -130,6 +136,14 @@ eco:rank a owl:DatatypeProperty ;
 eco:signatureVerified a owl:DatatypeProperty ;
     rdfs:domain eco:Participant ; rdfs:range xsd:boolean ; rdfs:label "signature verified" ;
     rdfs:comment "Harvest-time: the participant's signed agent-card (compact JWS) verified against the Ed25519 key in its DID document. The line between 'resolves' and 'verifiable'." .
+
+eco:requiresCredential a owl:ObjectProperty ;
+    rdfs:domain eco:Capability ; rdfs:range eco:CredentialRequirement ; rdfs:label "requires credential" ;
+    rdfs:comment "Consumption is VC-gated: a valid Verifiable Credential (verified against the trusted issuer's DID key, subject-bound, in-scope, unexpired) must be presented before the resource is served." .
+eco:scope a owl:DatatypeProperty ;
+    rdfs:domain eco:CredentialRequirement ; rdfs:range xsd:string ; rdfs:label "required scope" .
+eco:trustedIssuer a owl:ObjectProperty ;
+    rdfs:domain eco:CredentialRequirement ; rdfs:range eco:CredentialIssuer ; rdfs:label "trusted issuer" .
 
 ########################################################################
 ## Controlled vocabularies (SKOS concept schemes)
