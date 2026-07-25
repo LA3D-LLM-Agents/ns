@@ -127,6 +127,10 @@ eco:rank a owl:DatatypeProperty ;
     rdfs:domain eco:Visibility ; rdfs:range xsd:integer ; rdfs:label "openness rank" ;
     rdfs:comment "Lower = more open; a target more open than a source permits is a leak." .
 
+eco:signatureVerified a owl:DatatypeProperty ;
+    rdfs:domain eco:Participant ; rdfs:range xsd:boolean ; rdfs:label "signature verified" ;
+    rdfs:comment "Harvest-time: the participant's signed agent-card (compact JWS) verified against the Ed25519 key in its DID document. The line between 'resolves' and 'verifiable'." .
+
 ########################################################################
 ## Controlled vocabularies (SKOS concept schemes)
 ########################################################################
