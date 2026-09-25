@@ -34,8 +34,9 @@ ex:ssh a eco:AccessRequirement ; eco:accessMechanism eco:SSHAuthentication ; eco
 ex:db-login a eco:AccessRequirement ; eco:accessMechanism eco:DatabaseAuthentication ; eco:accessTarget "raredisease" .
 
 ex:wiki a eco:Bundle ; rdfs:label "Fabric project wiki" ; eco:consumptionMode eco:CloneAndInvoke ;
-  eco:hasCapability ex:explain ; eco:hasService ex:clone, ex:card .
+  eco:hasCapability ex:explain ; eco:hasService ex:clone .
 ex:explain a eco:Capability ; dct:identifier "explain-fabric" ; rdfs:label "Explain the fabric" ; eco:providedBy ex:wiki .
 ex:clone a eco:CloneEndpoint ; eco:serviceURL "https://github.com/chrissweet/llm-wiki-fabric.wiki.git"^^xsd:anyURI .
-ex:card a eco:AgentCard ; dct:format "text/markdown" ;
-  eco:serviceURL "https://github.com/chrissweet/llm-wiki-fabric/wiki/Card_llm-wiki-fabric"^^xsd:anyURI .
+ex:agent a eco:Agent ; rdfs:label "Fabric project agent" ; dct:identifier "chrissweet/llm-wiki-fabric" ; eco:hasCard ex:card ; eco:hasKnowledgeBundle ex:wiki .
+ex:card a eco:AgentCard ; eco:describesAgent ex:agent ; dct:format "text/markdown" ; dct:hasVersion "1.0" ;
+  eco:documentURL "https://github.com/chrissweet/llm-wiki-fabric/wiki/Card_llm-wiki-fabric"^^xsd:anyURI .

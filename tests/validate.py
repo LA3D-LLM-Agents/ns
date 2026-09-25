@@ -1,6 +1,7 @@
 """Offline ontology/profile checks. Examples are proposed metadata, not live results."""
 
 import json
+import hashlib
 from pathlib import Path
 
 from owlrl import DeductiveClosure, OWLRL_Semantics
@@ -14,12 +15,17 @@ ontology = Graph().parse(ROOT / "eco.ttl")
 shapes = Graph().parse(ROOT / "eco-discovery-shapes.ttl")
 example = Graph().parse(ROOT / "tests/discovery-example.ttl")
 assert (ROOT / "eco").read_bytes() == (ROOT / "eco.ttl").read_bytes()
-assert (ROOT / "versions/0.2.0/eco.ttl").read_bytes() == (ROOT / "eco.ttl").read_bytes()
-assert (ROOT / "versions/0.2.0/eco-discovery-shapes.ttl").read_bytes() == (
+assert (ROOT / "versions/0.3.0/eco.ttl").read_bytes() == (ROOT / "eco.ttl").read_bytes()
+assert (ROOT / "versions/0.3.0/eco-discovery-shapes.ttl").read_bytes() == (
     ROOT / "eco-discovery-shapes.ttl"
 ).read_bytes()
-assert list(ontology.objects(None, OWL.versionInfo)) == [Literal("0.2.0")]
+assert list(ontology.objects(None, OWL.versionInfo)) == [Literal("0.3.0")]
 assert not list(ontology.triples((None, OWL.imports, None)))
+for name, digest in {
+    "eco.ttl": "b3e2263425c99758515980ad0f71737991882f72771ed064c0b5303b3304a70a",
+    "eco-discovery-shapes.ttl": "2a45a1ce3ef23f04fc3570438a120d61d2156b1d94ca2de9e167b6ad10b6a8ea",
+}.items():
+    assert hashlib.sha256((ROOT / "versions/0.2.0" / name).read_bytes()).hexdigest() == digest
 # No PAD domain classes or properties are copied into fabric.
 assert not any(str(s).startswith("https://pad.crc.nd.edu/") for s in ontology.subjects())
 assert (ECO.hasCapability, RDFS.domain, ECO.Participant) in ontology
@@ -43,7 +49,9 @@ assert (EX.wiki, RDF.type, ECO.Connector) not in closure
 assert (EX.dictionary, RDF.type, ECO.Ontology) not in closure
 assert (EX.schema, RDF.type, ECO.Ontology) not in closure
 assert (EX.ssh, RDF.type, ECO.CredentialRequirement) not in closure
-assert (EX.card, RDF.type, ECO.MCPEndpoint) not in closure
+assert (EX.card, RDF.type, ECO.ServiceEndpoint) not in closure
+assert (EX.agent, RDF.type, ECO.Bundle) not in closure
+assert (EX.agent, RDF.type, ECO.Connector) not in closure
 passed.append("owl-role-separation")
 query_results = {}
 for path in sorted((ROOT / "tests/queries").glob("*.rq")):
@@ -113,7 +121,7 @@ Graph().parse(ROOT / "eco-shapes.ttl")
 print(
     json.dumps(
         {
-            "version": "0.2.0",
+            "version": "0.3.0",
             "ontology_triples": len(ontology),
             "classes": len(set(ontology.subjects(RDF.type, OWL.Class))),
             "checks": passed,

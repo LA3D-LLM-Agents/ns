@@ -1,9 +1,9 @@
 name: Validate discovery ontology
 on:
   push:
-    paths: ['eco', '*.ttl', 'versions/**', 'tests/**', '.github/workflows/validate.yml']
+    paths: ['eco', '*.ttl', 'versions/**', 'tests/**', 'examples/**', '.github/workflows/validate.yml']
   pull_request:
-    paths: ['eco', '*.ttl', 'versions/**', 'tests/**', '.github/workflows/validate.yml']
+    paths: ['eco', '*.ttl', 'versions/**', 'tests/**', 'examples/**', '.github/workflows/validate.yml']
 permissions:
   contents: read
 jobs:
@@ -18,3 +18,4 @@ jobs:
           cache-dependency-path: tests/requirements.txt
       - run: pip install -r tests/requirements.txt
       - run: python tests/validate.py
+      - run: python tests/agent_cards.py

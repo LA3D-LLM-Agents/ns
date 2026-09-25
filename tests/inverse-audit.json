@@ -1,0 +1,25 @@
+{
+  "paired": {
+    "memberOf": "hasMember",
+    "hasService": "serviceOf",
+    "hasOntology": "ontologyOf",
+    "hasSemanticEntrypoint": "semanticEntrypointOf",
+    "requiresAccess": "requiredFor",
+    "invokedThrough": "exposesSemanticEntrypoint",
+    "filedInto": "containsAnswer",
+    "reachableVia": "providesRouteTo",
+    "requiresCredential": "credentialRequiredBy",
+    "trustedIssuer": "trustedForRequirement",
+    "hasCapability": "providedBy",
+    "hasCard": "describesAgent",
+    "hasKnowledgeBundle": "knowledgeBundleOf",
+    "sessionOfAgent": "hasSession"
+  },
+  "without_named_inverse": {
+    "hasMaturity": "Classification facet: reverse lookup uses the same predicate; no separately meaningful relation needed.",
+    "hasVisibility": "Classification facet; do not invent a grant or audience relationship.",
+    "consumptionMode": "Controlled-vocabulary facet, queried in reverse without a new property.",
+    "executionLocation": "Controlled-vocabulary facet, not a host or actor relation.",
+    "accessMechanism": "Controlled-vocabulary facet; reverse lookup is a normal predicate query."
+  }
+}

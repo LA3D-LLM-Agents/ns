@@ -1,0 +1,66 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix eco: <https://la3d-llm-agents.github.io/ns/eco#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://github.com/chrissweet/llm-wiki-fabric/wiki/Card_llm-wiki-fabric> a eco:AgentCard ;
+    dcterms:format "text/markdown" ;
+    dcterms:hasVersion "1.0" ;
+    eco:describesAgent <urn:fabric:agent:chrissweet%2Fllm-wiki-fabric> ;
+    eco:documentURL "https://github.com/chrissweet/llm-wiki-fabric/wiki/Card_llm-wiki-fabric"^^xsd:anyURI .
+
+<urn:fabric:agent:chrissweet%2Fllm-wiki-fabric:skill:explain-dashboard> a eco:Capability ;
+    rdfs:label "Explain the resource dashboard" ;
+    dcterms:identifier "explain-dashboard" ;
+    rdfs:comment "Explain graph relationships and dashboard deployment." ;
+    eco:keyword "dashboard",
+        "graph" ;
+    eco:providedBy <urn:fabric:agent:chrissweet%2Fllm-wiki-fabric> .
+
+<urn:fabric:agent:chrissweet%2Fllm-wiki-fabric:skill:explain-fabric> a eco:Capability ;
+    rdfs:label "Explain fabric discovery" ;
+    dcterms:identifier "explain-fabric" ;
+    rdfs:comment "Explain descriptor-driven discovery and direct resource access." ;
+    eco:keyword "discovery",
+        "fabric" ;
+    eco:providedBy <urn:fabric:agent:chrissweet%2Fllm-wiki-fabric> .
+
+<urn:fabric:agent:chrissweet%2Fllm-wiki-fabric:skill:explain-validation> a eco:Capability ;
+    rdfs:label "Explain recorded validation" ;
+    dcterms:identifier "explain-validation" ;
+    rdfs:comment "Answer questions about recorded PAD and rare-disease integration checks." ;
+    eco:keyword "pad",
+        "rare-disease" ;
+    eco:providedBy <urn:fabric:agent:chrissweet%2Fllm-wiki-fabric> .
+
+<urn:fabric:agent:chrissweet%2Fllm-wiki-fabric:skill:maintain-fabric> a eco:Capability ;
+    rdfs:label "Maintain fabric integrations" ;
+    dcterms:identifier "maintain-fabric" ;
+    rdfs:comment "Document hosted discovery and direct resource connectors." ;
+    eco:keyword "mcp",
+        "operations" ;
+    eco:providedBy <urn:fabric:agent:chrissweet%2Fllm-wiki-fabric> .
+
+<https://github.com/chrissweet/llm-wiki-fabric/wiki> a eco:Bundle ;
+    rdfs:label "project-wiki" ;
+    eco:hasService <urn:fabric:agent:chrissweet%2Fllm-wiki-fabric:interface:wiki-ask> ;
+    eco:knowledgeBundleOf <urn:fabric:agent:chrissweet%2Fllm-wiki-fabric> .
+
+<urn:fabric:agent:chrissweet%2Fllm-wiki-fabric:interface:wiki-ask> a eco:CloneEndpoint ;
+    eco:serviceOf <https://github.com/chrissweet/llm-wiki-fabric/wiki>,
+        <urn:fabric:agent:chrissweet%2Fllm-wiki-fabric> ;
+    eco:serviceURL "https://github.com/chrissweet/llm-wiki-fabric.wiki.git"^^xsd:anyURI .
+
+<urn:fabric:agent:chrissweet%2Fllm-wiki-fabric> a eco:Agent ;
+    rdfs:label "Fabric project agent" ;
+    dcterms:identifier "chrissweet/llm-wiki-fabric" ;
+    rdfs:comment "Explains and maintains the llm-wiki fabric discovery architecture and recorded integrations." ;
+    eco:consumptionMode eco:CloneAndInvoke ;
+    eco:hasCapability <urn:fabric:agent:chrissweet%2Fllm-wiki-fabric:skill:explain-dashboard>,
+        <urn:fabric:agent:chrissweet%2Fllm-wiki-fabric:skill:explain-fabric>,
+        <urn:fabric:agent:chrissweet%2Fllm-wiki-fabric:skill:explain-validation>,
+        <urn:fabric:agent:chrissweet%2Fllm-wiki-fabric:skill:maintain-fabric> ;
+    eco:hasCard <https://github.com/chrissweet/llm-wiki-fabric/wiki/Card_llm-wiki-fabric> ;
+    eco:hasKnowledgeBundle <https://github.com/chrissweet/llm-wiki-fabric/wiki> ;
+    eco:hasService <urn:fabric:agent:chrissweet%2Fllm-wiki-fabric:interface:wiki-ask> .
+
