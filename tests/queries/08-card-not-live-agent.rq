@@ -1,0 +1,5 @@
+PREFIX eco: <https://la3d-llm-agents.github.io/ns/eco#>
+PREFIX ex: <urn:eco:example:>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+ASK { ex:wiki eco:hasService ?card . ?card a eco:AgentCard ; dct:format "text/markdown" . FILTER NOT EXISTS { ?card a eco:MCPEndpoint } }

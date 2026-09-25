@@ -1,0 +1,5 @@
+PREFIX eco: <https://la3d-llm-agents.github.io/ns/eco#>
+PREFIX ex: <urn:eco:example:>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+ASK { ex:database eco:hasSemanticEntrypoint ?d, ?s . ?d a eco:DataDictionary ; eco:toolName "db_schema" ; eco:executionLocation eco:ClientSide ; eco:invokedThrough ex:local-direct . ?s a eco:LiveSchema . ex:local-direct eco:transport "stdio" . FILTER NOT EXISTS { ex:local-direct eco:serviceURL ?url } }

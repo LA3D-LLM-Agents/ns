@@ -1,0 +1,41 @@
+# Proposed mapping fixture, NOT a snapshot of the deployed fabric graph.
+@prefix ex: <urn:eco:example:> .
+@prefix eco: <https://la3d-llm-agents.github.io/ns/eco#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:pad a eco:Connector ; rdfs:label "PAD" ; eco:consumptionMode eco:DirectAccess ;
+  eco:hasCapability ex:cards, ex:networks ; eco:hasService ex:pad-mcp, ex:pad-openapi ;
+  eco:hasOntology ex:pad-ontology .
+ex:cards a eco:Capability ; dct:identifier "pad-cards" ; rdfs:label "Cards" ;
+  rdfs:comment "PAD Cards endpoints" ; eco:keyword "cards" ; eco:providedBy ex:pad .
+ex:networks a eco:Capability ; dct:identifier "pad-neural-networks" ; rdfs:label "Neural Networks" ;
+  rdfs:comment "PAD Neural Networks endpoints" ; eco:keyword "neural", "networks" ; eco:providedBy ex:pad .
+ex:pad-mcp a eco:MCPEndpoint ; eco:transport "streamable-http" ;
+  eco:serviceURL "https://pad.crc.nd.edu/mcp"^^xsd:anyURI .
+ex:pad-openapi a eco:OpenAPI ; eco:serviceURL "https://pad.crc.nd.edu/openapi.json"^^xsd:anyURI .
+ex:pad-ontology a eco:PublishedOntology ;
+  eco:documentURL "https://pad.crc.nd.edu/ontology/ontology.ttl"^^xsd:anyURI ;
+  eco:toolName "download_ontology" ; eco:invokedThrough ex:pad-mcp ; eco:executionLocation eco:ResourceSide .
+
+ex:database a eco:Connector ; rdfs:label "Rare-disease research database" ;
+  eco:consumptionMode eco:DirectAccess ; eco:hasService ex:local-direct ;
+  eco:hasCapability ex:sql ; eco:hasSemanticEntrypoint ex:dictionary, ex:schema ;
+  eco:requiresAccess ex:ssh, ex:db-login .
+ex:sql a eco:Capability ; dct:identifier "sql-read" ; rdfs:label "Read research tables" ;
+  eco:keyword "literature", "publications" ; eco:providedBy ex:database .
+ex:local-direct a eco:MCPEndpoint ; eco:transport "stdio" .
+ex:dictionary a eco:DataDictionary ; eco:toolName "db_schema" ;
+  eco:invokedThrough ex:local-direct ; eco:executionLocation eco:ClientSide .
+ex:schema a eco:LiveSchema ; eco:toolName "db_schema" ;
+  eco:invokedThrough ex:local-direct ; eco:executionLocation eco:ClientSide .
+ex:ssh a eco:AccessRequirement ; eco:accessMechanism eco:SSHAuthentication ; eco:accessTarget "fabric.crc.nd.edu" .
+ex:db-login a eco:AccessRequirement ; eco:accessMechanism eco:DatabaseAuthentication ; eco:accessTarget "raredisease" .
+
+ex:wiki a eco:Bundle ; rdfs:label "Fabric project wiki" ; eco:consumptionMode eco:CloneAndInvoke ;
+  eco:hasCapability ex:explain ; eco:hasService ex:clone, ex:card .
+ex:explain a eco:Capability ; dct:identifier "explain-fabric" ; rdfs:label "Explain the fabric" ; eco:providedBy ex:wiki .
+ex:clone a eco:CloneEndpoint ; eco:serviceURL "https://github.com/chrissweet/llm-wiki-fabric.wiki.git"^^xsd:anyURI .
+ex:card a eco:AgentCard ; dct:format "text/markdown" ;
+  eco:serviceURL "https://github.com/chrissweet/llm-wiki-fabric/wiki/Card_llm-wiki-fabric"^^xsd:anyURI .
