@@ -1,0 +1,51 @@
+@prefix ds: <https://la3d-llm-agents.github.io/ns/profiles/dataset-discovery/0.1.0/#> .
+@prefix eco: <https://la3d-llm-agents.github.io/ns/eco#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Target served datasets, not every dcat:Dataset (wiki Bundles are also datasets).
+ds:ServedDatasetShape a sh:NodeShape ;
+  sh:targetObjectsOf dcat:servesDataset ;
+  sh:nodeKind sh:IRI ;
+  sh:class dcat:Dataset ; sh:class eco:Participant ;
+  sh:not [ sh:or ( [ sh:class eco:Bundle ] [ sh:class eco:Agent ]
+                  [ sh:class eco:Connector ] [ sh:class eco:ServiceEndpoint ] ) ] ;
+  sh:property [ sh:path dct:identifier ; sh:minCount 1 ; sh:maxCount 1 ;
+    sh:datatype xsd:string ; sh:pattern "^[A-Za-z0-9][A-Za-z0-9_-]*$" ; sh:maxLength 100 ] ;
+  sh:property [ sh:path dct:title ; sh:minCount 1 ; sh:maxCount 1 ;
+    sh:datatype xsd:string ; sh:minLength 1 ] ;
+  sh:property [ sh:path dct:description ; sh:minCount 1 ; sh:maxCount 1 ;
+    sh:datatype xsd:string ; sh:minLength 1 ] ;
+  sh:property [ sh:path dcat:version ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:minLength 1 ] ;
+  sh:property [ sh:path eco:hasSemanticEntrypoint ; sh:minCount 1 ;
+    sh:class eco:SemanticEntrypoint ] ;
+  sh:sparql [ sh:message "Dataset identifiers must be unique across served datasets." ;
+    sh:select """PREFIX dcat: <http://www.w3.org/ns/dcat#>
+      PREFIX dct: <http://purl.org/dc/terms/>
+      SELECT $this WHERE { $this dct:identifier ?id . ?s dcat:servesDataset ?other .
+        ?other dct:identifier ?id . FILTER (?other != $this) }""" ] .
+
+ds:ServingConnectorShape a sh:NodeShape ;
+  sh:targetSubjectsOf dcat:servesDataset ;
+  sh:class eco:Connector ; sh:class dcat:DataService ;
+  sh:property [ sh:path eco:hasService ; sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class eco:MCPEndpoint ] ] .
+
+ds:InspectionRouteShape a sh:NodeShape ;
+  sh:targetObjectsOf dcat:servesDataset ;
+  sh:sparql [ sh:message "Dataset inspections must use a serving connector's MCP endpoint." ;
+    sh:select """PREFIX dcat: <http://www.w3.org/ns/dcat#>
+      PREFIX eco: <https://la3d-llm-agents.github.io/ns/eco#>
+      SELECT $this WHERE { $this eco:hasSemanticEntrypoint ?inspection .
+        FILTER NOT EXISTS { ?provider dcat:servesDataset $this ; <https://la3d-llm-agents.github.io/ns/eco#hasService> ?endpoint .
+          ?inspection eco:invokedThrough ?endpoint ; eco:executionLocation eco:ResourceSide . }
+      }""" ] .
+
+# Non-wiki datasets must not silently escape validation when their service link is absent.
+ds:DatasetCoverageShape a sh:NodeShape ; sh:targetClass dcat:Dataset ;
+  sh:or ( [ sh:class eco:Bundle ] [ sh:node ds:ServedDatasetShape ] ) .
+
+ds:ServedDatasetShape sh:property [ sh:path [ sh:inversePath dcat:servesDataset ] ;
+  sh:minCount 1 ; sh:class eco:Connector ] .
