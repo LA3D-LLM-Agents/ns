@@ -1,0 +1,12 @@
+{
+  "profile_version": "0.1.0",
+  "eco_version": "0.3.0",
+  "artifacts": {
+    "schema.json": "96787f397fbf304ccb5e58b7a6c75915358f22b3dfceff18c7f4c29ea7540365",
+    "shapes.ttl": "f6669bdd4c7a58d394b549e8e7cae41406f7ad0b6d65f9d1c8dfb1289792c240"
+  },
+  "dependencies": {
+    "versions/0.3.0/eco.ttl": "ebaef2e8391b26d40ca3b453d5856f3183f493d48b0493641933080da030d4ba",
+    "versions/0.3.0/eco-discovery-shapes.ttl": "e32e8872c22130b0d8341d1e7dd438d947a7cd2d6081a9541c514d16a4ffc5be"
+  }
+}

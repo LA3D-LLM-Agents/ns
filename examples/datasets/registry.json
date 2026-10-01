@@ -1,0 +1,91 @@
+{
+  "profile_version": "0.1.0",
+  "datasets": [
+    {
+      "id": "okn-rdkg",
+      "iri": "https://purl.org/okn/frink/kg/rdkg",
+      "label": "RDKG",
+      "description": "Illustrative dataset discovery record for RDKG; not a current upstream observation.",
+      "kind": "knowledge-graph",
+      "named_graph": "https://purl.org/okn/frink/kg/rdkg",
+      "tags": [
+        "rdkg",
+        "OKN"
+      ],
+      "access_bindings": [
+        {
+          "resource_id": "okn",
+          "source_shortname": "rdkg",
+          "semantic_inspections": [
+            {
+              "tool_name": "get_schema",
+              "arguments": {
+                "shortname": "rdkg"
+              }
+            }
+          ],
+          "version_inspection": {
+            "tool_name": "get_kg_version",
+            "arguments": {
+              "shortname": "rdkg"
+            }
+          }
+        }
+      ],
+      "provenance": {
+        "curator": "Synthetic profile fixture, not a live harvest",
+        "observations": [
+          {
+            "source": {
+              "url": "https://example.org/dataset-profile-fixture"
+            },
+            "observed_at": "2026-10-01T00:00:00Z"
+          }
+        ]
+      }
+    },
+    {
+      "id": "okn-ruralkg",
+      "iri": "https://purl.org/okn/frink/kg/ruralkg",
+      "label": "RuralKG",
+      "description": "Illustrative dataset discovery record for RuralKG; not a current upstream observation.",
+      "kind": "knowledge-graph",
+      "named_graph": "https://purl.org/okn/frink/kg/ruralkg",
+      "tags": [
+        "ruralkg",
+        "OKN"
+      ],
+      "access_bindings": [
+        {
+          "resource_id": "okn",
+          "source_shortname": "ruralkg",
+          "semantic_inspections": [
+            {
+              "tool_name": "get_schema",
+              "arguments": {
+                "shortname": "ruralkg"
+              }
+            }
+          ],
+          "version_inspection": {
+            "tool_name": "get_kg_version",
+            "arguments": {
+              "shortname": "ruralkg"
+            }
+          }
+        }
+      ],
+      "provenance": {
+        "curator": "Synthetic profile fixture, not a live harvest",
+        "observations": [
+          {
+            "source": {
+              "url": "https://example.org/dataset-profile-fixture"
+            },
+            "observed_at": "2026-10-01T00:00:00Z"
+          }
+        ]
+      }
+    }
+  ]
+}

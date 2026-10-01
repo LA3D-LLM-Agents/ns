@@ -193,3 +193,14 @@ MCP/A2A advertisements. The original eight discovery ASK questions and ten negat
 discovery fixtures also pass against 0.3. No source data was queried. Test results
 establish structural mapping behavior, not successful enrollment, authentication,
 live A2A execution or a deployed fabric migration.
+
+
+## Dataset discovery profile proposal
+
+[Dataset discovery 0.1.0](profiles/dataset-discovery/0.1.0/README.md) adds a
+separate JSON Schema and supplementary SHACL profile for scientific datasets
+served by existing connectors. It reuses DCAT and eco 0.3.0 without changing
+core ontology aliases or release files. Synthetic RuralKG/RDKG fixtures and an
+offline reference adapter demonstrate one service exposing two datasets, with
+explicit provenance and parameterized inspection metadata retained in JSON.
+Run `python tests/datasets.py` after installing tests/requirements.txt.
