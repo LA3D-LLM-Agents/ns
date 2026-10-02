@@ -99,7 +99,7 @@ The original count response and nearby schema/version digests are retained under
 ## RDF projection
 
 The vocabulary namespace is
-`https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/vocab#`.
+`https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/vocab.ttl#`.
 Load `vocab.ttl`, the pinned eco ontology, and all three sets of SHACL shapes
 (eco, dataset and recipe), with RDFS inference and no remote imports.
 

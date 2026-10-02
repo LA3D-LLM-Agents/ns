@@ -14,7 +14,7 @@ from rdflib.plugins.sparql.parserutils import CompValue
 
 ROOT = Path(__file__).resolve().parents[2]
 PROFILE = ROOT / "profiles/join-recipe-discovery/0.1.0"
-JR = Namespace("https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/vocab#")
+JR = Namespace("https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/vocab.ttl#")
 PROV = Namespace("http://www.w3.org/ns/prov#")
 ECO = Namespace("https://la3d-llm-agents.github.io/ns/eco#")
 SCHEMA = json.loads((PROFILE / "schema.json").read_text())

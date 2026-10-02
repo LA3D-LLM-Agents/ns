@@ -1,11 +1,11 @@
 {
   "profile_version": "0.1.0",
-  "namespace": "https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/vocab#",
+  "namespace": "https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/vocab.ttl#",
   "artifacts": {
     "schema.json": "c03ed5ec59d7a9bdfe9c668b08df702c13d0ac9a9186dcd6d50fce1b054dcf40",
     "search.schema.json": "1700f241f3964bb34577cf6176390a2afa3622a6e9b2745dc8c490299566d0c1",
-    "vocab.ttl": "5592202f6b99228775894c5ac8e2557d127a2e0722fffeea7182f4a3b21fea41",
-    "shapes.ttl": "a5d542638835666b119329ef590b1fc3b27cac8fc6848680290a1d45293c78e8"
+    "vocab.ttl": "2f868b09a1f68094cc19028db99548d570bdb596579c2fc9f5452fbfb3f8107a",
+    "shapes.ttl": "3ec79e3e0d3d50853e992c5266a8c2c27f1dc2a03b2e7e553df2b5e35793a3b0"
   },
   "dependencies": {
     "versions/0.3.0/eco.ttl": "ebaef2e8391b26d40ca3b453d5856f3183f493d48b0493641933080da030d4ba",

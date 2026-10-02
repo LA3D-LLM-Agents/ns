@@ -1,11 +1,11 @@
-@prefix jr: <https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/vocab#> .
+@prefix jr: <https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/vocab.ttl#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix dcat: <http://www.w3.org/ns/dcat#> .
 
-<https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/vocab>
+<https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/vocab.ttl>
     a owl:Ontology ; owl:versionInfo "0.1.0" ;
     rdfs:comment "Qualified join plans and observations; discovery does not execute or authorize them." .
 jr:JoinRecord a owl:Class ; rdfs:subClassOf prov:Entity .
