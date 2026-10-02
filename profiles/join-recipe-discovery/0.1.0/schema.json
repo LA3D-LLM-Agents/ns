@@ -1,0 +1,886 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "profile_version": {
+      "const": "0.1.0"
+    },
+    "coverage": {
+      "const": "reviewed_subset"
+    },
+    "recipes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/recipe"
+      },
+      "minItems": 0,
+      "maxItems": 100
+    },
+    "assessments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/assessment"
+      },
+      "minItems": 0,
+      "maxItems": 100
+    }
+  },
+  "required": [
+    "profile_version",
+    "coverage",
+    "recipes",
+    "assessments"
+  ],
+  "$defs": {
+    "participant": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "role_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+        },
+        "role": {
+          "enum": [
+            "left",
+            "right",
+            "bridge"
+          ]
+        },
+        "dataset_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+        },
+        "iri": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048,
+          "format": "uri"
+        },
+        "named_graph": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048,
+          "format": "uri"
+        }
+      },
+      "required": [
+        "role_id",
+        "role",
+        "dataset_id",
+        "iri",
+        "named_graph"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+        },
+        "tool_name": {
+          "const": "get_join_strategy"
+        },
+        "arguments": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kg_a": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+            },
+            "kg_b": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+            }
+          },
+          "required": [
+            "kg_a",
+            "kg_b"
+          ]
+        },
+        "observed_at": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 50,
+          "format": "date-time"
+        },
+        "payload_sha256": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "payload": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "resource_id",
+        "tool_name",
+        "arguments",
+        "observed_at",
+        "payload_sha256",
+        "payload"
+      ]
+    },
+    "template": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+        },
+        "language": {
+          "const": "sparql-1.1"
+        },
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 65536
+        },
+        "sha256": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "named_graphs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048,
+            "format": "uri"
+          },
+          "minItems": 2,
+          "maxItems": 10
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "measurement": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "count_distinct"
+            },
+            "variable": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            }
+          },
+          "required": [
+            "kind",
+            "variable",
+            "unit"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "language",
+        "query",
+        "sha256",
+        "named_graphs",
+        "purpose",
+        "measurement"
+      ]
+    },
+    "assertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "verified",
+            "known_non_join",
+            "unknown"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "reported_date": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10,
+          "format": "date"
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "metric": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "value": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            },
+            "reported_date": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10,
+              "format": "date"
+            }
+          },
+          "required": [
+            "value",
+            "unit"
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "scope",
+        "note"
+      ]
+    },
+    "local_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+        },
+        "template_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+        },
+        "template_sha256": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "observed_at": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 50,
+          "format": "date-time"
+        },
+        "outcome": {
+          "enum": [
+            "matches_observed",
+            "no_matches_for_query",
+            "inconclusive"
+          ]
+        },
+        "resource_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "dataset_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "participants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/participant"
+          },
+          "minItems": 2,
+          "maxItems": 10
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "dataset_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+              },
+              "value": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 300
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "observed_at": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 50,
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "dataset_id",
+              "value",
+              "observed_at"
+            ]
+          },
+          "minItems": 2,
+          "maxItems": 10
+        },
+        "schemas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "dataset_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200,
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+              },
+              "observed_at": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 50,
+                "format": "date-time"
+              },
+              "payload_sha256": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64,
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            },
+            "required": [
+              "dataset_id",
+              "observed_at",
+              "payload_sha256"
+            ]
+          },
+          "minItems": 2,
+          "maxItems": 10
+        },
+        "arguments": {
+          "type": "object",
+          "maxProperties": 20,
+          "propertyNames": {
+            "maxLength": 100
+          },
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "null"
+            ],
+            "maxLength": 65536
+          }
+        },
+        "response": {
+          "type": "object"
+        },
+        "response_sha256": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "metric": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "value": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            },
+            "reported_date": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10,
+              "format": "date"
+            }
+          },
+          "required": [
+            "value",
+            "unit"
+          ]
+        },
+        "error": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+            }
+          },
+          "required": [
+            "code"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "template_id",
+        "template_sha256",
+        "observed_at",
+        "outcome",
+        "resource_revision",
+        "dataset_revision",
+        "participants",
+        "versions",
+        "schemas",
+        "arguments",
+        "response",
+        "response_sha256"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "inconclusive"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "error"
+            ],
+            "not": {
+              "required": [
+                "metric"
+              ]
+            }
+          },
+          "else": {
+            "required": [
+              "metric"
+            ],
+            "not": {
+              "required": [
+                "error"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "recipe": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+        },
+        "iri": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048,
+          "format": "uri"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 5000
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "minItems": 0,
+          "maxItems": 50
+        },
+        "upstream": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "resource_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+            }
+          },
+          "required": [
+            "resource_id",
+            "id"
+          ]
+        },
+        "participants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/participant"
+          },
+          "minItems": 2,
+          "maxItems": 10
+        },
+        "method": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "enum": [
+                "exact_identifier",
+                "identifier_normalization",
+                "directional_taxonomy",
+                "exact_label",
+                "other"
+              ]
+            },
+            "key": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            "selections": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "role_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+                  },
+                  "position": {
+                    "enum": [
+                      "subject",
+                      "object"
+                    ]
+                  },
+                  "predicates": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048,
+                      "format": "uri"
+                    },
+                    "minItems": 0,
+                    "maxItems": 10
+                  },
+                  "types": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048,
+                      "format": "uri"
+                    },
+                    "minItems": 0,
+                    "maxItems": 10
+                  },
+                  "description": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2000
+                  }
+                },
+                "required": [
+                  "role_id",
+                  "position",
+                  "predicates",
+                  "types",
+                  "description"
+                ]
+              },
+              "minItems": 2,
+              "maxItems": 10
+            },
+            "transformations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "role_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+                  },
+                  "description": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2000
+                  },
+                  "expression": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4000
+                  }
+                },
+                "required": [
+                  "role_id",
+                  "description",
+                  "expression"
+                ]
+              },
+              "minItems": 0,
+              "maxItems": 20
+            }
+          },
+          "required": [
+            "kind",
+            "key",
+            "selections",
+            "transformations"
+          ]
+        },
+        "templates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/template"
+          },
+          "minItems": 1,
+          "maxItems": 5
+        },
+        "execution_binding": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "resource_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+            },
+            "tool_name": {
+              "const": "sparql_query"
+            },
+            "query_argument": {
+              "const": "query"
+            },
+            "arguments": {
+              "type": "object",
+              "maxProperties": 20,
+              "propertyNames": {
+                "maxLength": 100
+              },
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "null"
+                ],
+                "maxLength": 65536
+              }
+            }
+          },
+          "required": [
+            "resource_id",
+            "tool_name",
+            "query_argument",
+            "arguments"
+          ]
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "curator": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            },
+            "observation": {
+              "$ref": "#/$defs/source"
+            }
+          },
+          "required": [
+            "curator",
+            "observation"
+          ]
+        },
+        "source_assertions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/assertion"
+          },
+          "minItems": 1,
+          "maxItems": 20
+        },
+        "local_observations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/local_observation"
+          },
+          "minItems": 0,
+          "maxItems": 20
+        }
+      },
+      "required": [
+        "id",
+        "iri",
+        "label",
+        "description",
+        "tags",
+        "upstream",
+        "participants",
+        "method",
+        "templates",
+        "execution_binding",
+        "provenance",
+        "source_assertions",
+        "local_observations"
+      ]
+    },
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+        },
+        "iri": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048,
+          "format": "uri"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 5000
+        },
+        "participants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/participant"
+          },
+          "minItems": 2,
+          "maxItems": 10
+        },
+        "method_kind": {
+          "enum": [
+            "exact_identifier",
+            "identifier_normalization",
+            "directional_taxonomy",
+            "exact_label",
+            "other"
+          ]
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 5000
+        },
+        "status": {
+          "enum": [
+            "verified",
+            "known_non_join",
+            "unknown"
+          ]
+        },
+        "reported_date": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10,
+          "format": "date"
+        },
+        "curator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      },
+      "required": [
+        "id",
+        "iri",
+        "label",
+        "description",
+        "participants",
+        "scope",
+        "status",
+        "curator",
+        "source"
+      ]
+    }
+  }
+}

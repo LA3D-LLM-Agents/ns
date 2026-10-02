@@ -1,0 +1,176 @@
+{
+  "profile_version": "0.1.0",
+  "datasets": [
+    {
+      "id": "okn-rdkg",
+      "iri": "https://purl.org/okn/frink/kg/rdkg",
+      "label": "Rare Disease Knowledge Graph",
+      "description": "RDKG is an open knowledge graph for rare diseases that integrates standardized disease identifiers and cross-references to support discovery and evidence synthesis.",
+      "kind": "knowledge-graph",
+      "named_graph": "https://purl.org/okn/frink/kg/rdkg",
+      "tags": [
+        "OKN",
+        "anatomy",
+        "chemical",
+        "disease",
+        "drug",
+        "gene",
+        "phenotype",
+        "rdkg",
+        "variant"
+      ],
+      "access_bindings": [
+        {
+          "resource_id": "okn",
+          "source_shortname": "rdkg",
+          "semantic_inspections": [
+            {
+              "tool_name": "get_schema",
+              "arguments": {
+                "shortname": "rdkg"
+              }
+            }
+          ],
+          "version_inspection": {
+            "tool_name": "get_kg_version",
+            "arguments": {
+              "shortname": "rdkg"
+            }
+          }
+        }
+      ],
+      "provenance": {
+        "curator": "chrissweet via codex",
+        "observations": [
+          {
+            "source": {
+              "resource_id": "okn",
+              "tool": {
+                "tool_name": "list_kgs",
+                "arguments": {}
+              }
+            },
+            "observed_at": "2026-10-01T23:02:04.123646+00:00",
+            "payload_sha256": "fcfa5eedc70cb124d781122d7779d276739cb7b4f91958231e972220a6b92dd0"
+          }
+        ]
+      },
+      "source_version": {
+        "value": "v0.0.1",
+        "observation": {
+          "source": {
+            "resource_id": "okn",
+            "tool": {
+              "tool_name": "get_kg_version",
+              "arguments": {
+                "shortname": "rdkg"
+              }
+            }
+          },
+          "observed_at": "2026-10-01T23:02:05.337690+00:00",
+          "payload_sha256": "d2530fdea673f24f8c335a3203f2c4bff4be4a5c7707a26b688b7eaaaf21291a"
+        }
+      },
+      "loaded_at": {
+        "value": "2026-05-04T19:19:45.042+00:00",
+        "observation": {
+          "source": {
+            "resource_id": "okn",
+            "tool": {
+              "tool_name": "get_kg_version",
+              "arguments": {
+                "shortname": "rdkg"
+              }
+            }
+          },
+          "observed_at": "2026-10-01T23:02:05.337690+00:00",
+          "payload_sha256": "d2530fdea673f24f8c335a3203f2c4bff4be4a5c7707a26b688b7eaaaf21291a"
+        }
+      }
+    },
+    {
+      "id": "okn-ruralkg",
+      "iri": "https://purl.org/okn/frink/kg/ruralkg",
+      "label": "Rural Resilience KG",
+      "description": "Rural Resilience KG is a cross-domain knowledge graph to integrate health and justice for rural resilience.",
+      "kind": "knowledge-graph",
+      "named_graph": "https://purl.org/okn/frink/kg/ruralkg",
+      "tags": [
+        "OKN",
+        "drug",
+        "geospatial",
+        "justice",
+        "ruralkg",
+        "social_service"
+      ],
+      "access_bindings": [
+        {
+          "resource_id": "okn",
+          "source_shortname": "ruralkg",
+          "semantic_inspections": [
+            {
+              "tool_name": "get_schema",
+              "arguments": {
+                "shortname": "ruralkg"
+              }
+            }
+          ],
+          "version_inspection": {
+            "tool_name": "get_kg_version",
+            "arguments": {
+              "shortname": "ruralkg"
+            }
+          }
+        }
+      ],
+      "provenance": {
+        "curator": "chrissweet via codex",
+        "observations": [
+          {
+            "source": {
+              "resource_id": "okn",
+              "tool": {
+                "tool_name": "list_kgs",
+                "arguments": {}
+              }
+            },
+            "observed_at": "2026-10-01T23:02:04.123646+00:00",
+            "payload_sha256": "fcfa5eedc70cb124d781122d7779d276739cb7b4f91958231e972220a6b92dd0"
+          }
+        ]
+      },
+      "source_version": {
+        "value": "v0.2.10",
+        "observation": {
+          "source": {
+            "resource_id": "okn",
+            "tool": {
+              "tool_name": "get_kg_version",
+              "arguments": {
+                "shortname": "ruralkg"
+              }
+            }
+          },
+          "observed_at": "2026-10-01T23:02:06.377866+00:00",
+          "payload_sha256": "e0a76226a59706c9a2f6751087fce36837e302d472c4e31a085eb16c391f4d04"
+        }
+      },
+      "loaded_at": {
+        "value": "2026-09-03T22:57:32.814+00:00",
+        "observation": {
+          "source": {
+            "resource_id": "okn",
+            "tool": {
+              "tool_name": "get_kg_version",
+              "arguments": {
+                "shortname": "ruralkg"
+              }
+            }
+          },
+          "observed_at": "2026-10-01T23:02:06.377866+00:00",
+          "payload_sha256": "e0a76226a59706c9a2f6751087fce36837e302d472c4e31a085eb16c391f4d04"
+        }
+      }
+    }
+  ]
+}

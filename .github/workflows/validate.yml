@@ -20,3 +20,4 @@ jobs:
       - run: python tests/validate.py
       - run: python tests/agent_cards.py
       - run: python tests/datasets.py
+      - run: python tests/join_recipes.py

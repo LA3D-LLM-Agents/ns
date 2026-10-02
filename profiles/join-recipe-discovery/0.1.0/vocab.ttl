@@ -1,0 +1,38 @@
+@prefix jr: <https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/vocab#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+
+<https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/vocab>
+    a owl:Ontology ; owl:versionInfo "0.1.0" ;
+    rdfs:comment "Qualified join plans and observations; discovery does not execute or authorize them." .
+jr:JoinRecord a owl:Class ; rdfs:subClassOf prov:Entity .
+jr:Recipe a owl:Class ; rdfs:subClassOf jr:JoinRecord, prov:Plan .
+jr:Assessment a owl:Class ; rdfs:subClassOf jr:JoinRecord ;
+    rdfs:comment "A scoped source claim, not a proof that all joins are impossible." .
+jr:Participation a owl:Class .
+jr:SourceAssertion a owl:Class ; rdfs:subClassOf prov:Entity .
+jr:QueryTemplate a owl:Class ; rdfs:subClassOf prov:Entity .
+jr:ExecutionObservation a owl:Class ; rdfs:subClassOf prov:Activity .
+jr:Result a owl:Class ; rdfs:subClassOf prov:Entity .
+jr:hasParticipation a owl:ObjectProperty ; rdfs:domain jr:JoinRecord ; rdfs:range jr:Participation .
+jr:dataset a owl:ObjectProperty ; rdfs:domain jr:Participation ; rdfs:range dcat:Dataset .
+jr:role a owl:DatatypeProperty ; rdfs:domain jr:Participation ; rdfs:range xsd:string .
+jr:executionResource a owl:ObjectProperty ; rdfs:domain jr:Recipe ; rdfs:range dcat:DataService .
+jr:hasTemplate a owl:ObjectProperty ; rdfs:domain jr:Recipe ; rdfs:range jr:QueryTemplate .
+jr:hasSourceAssertion a owl:ObjectProperty ; rdfs:domain jr:Recipe ; rdfs:range jr:SourceAssertion .
+jr:hasObservation a owl:ObjectProperty ; rdfs:domain jr:Recipe ; rdfs:range jr:ExecutionObservation .
+# Scope/status/time/digests intentionally have no domain: they apply to several evidence roles.
+jr:scope a owl:DatatypeProperty ; rdfs:range xsd:string .
+jr:status a owl:DatatypeProperty ; rdfs:range xsd:string .
+jr:observedAt a owl:DatatypeProperty ; rdfs:range xsd:dateTime .
+jr:reportedDate a owl:DatatypeProperty ; rdfs:range xsd:date .
+jr:payloadDigest a owl:DatatypeProperty ; rdfs:range xsd:string .
+jr:templateDigest a owl:DatatypeProperty ; rdfs:domain jr:QueryTemplate ; rdfs:range xsd:string .
+jr:outcome a owl:DatatypeProperty ; rdfs:domain jr:ExecutionObservation ; rdfs:range xsd:string .
+jr:count a owl:DatatypeProperty ; rdfs:domain jr:Result ; rdfs:range xsd:integer .
+jr:unit a owl:DatatypeProperty ; rdfs:domain jr:Result ; rdfs:range xsd:string .
+jr:errorCode a owl:DatatypeProperty ; rdfs:domain jr:Result ; rdfs:range xsd:string .
+# No property is symmetric/transitive and no inverse is declared or materialized.

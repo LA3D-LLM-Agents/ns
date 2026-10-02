@@ -1,0 +1,16 @@
+{
+  "profile_version": "0.1.0",
+  "namespace": "https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/vocab#",
+  "artifacts": {
+    "schema.json": "c03ed5ec59d7a9bdfe9c668b08df702c13d0ac9a9186dcd6d50fce1b054dcf40",
+    "search.schema.json": "1700f241f3964bb34577cf6176390a2afa3622a6e9b2745dc8c490299566d0c1",
+    "vocab.ttl": "5592202f6b99228775894c5ac8e2557d127a2e0722fffeea7182f4a3b21fea41",
+    "shapes.ttl": "a5d542638835666b119329ef590b1fc3b27cac8fc6848680290a1d45293c78e8"
+  },
+  "dependencies": {
+    "versions/0.3.0/eco.ttl": "ebaef2e8391b26d40ca3b453d5856f3183f493d48b0493641933080da030d4ba",
+    "versions/0.3.0/eco-discovery-shapes.ttl": "e32e8872c22130b0d8341d1e7dd438d947a7cd2d6081a9541c514d16a4ffc5be",
+    "profiles/dataset-discovery/0.1.0/schema.json": "96787f397fbf304ccb5e58b7a6c75915358f22b3dfceff18c7f4c29ea7540365",
+    "profiles/dataset-discovery/0.1.0/shapes.ttl": "f6669bdd4c7a58d394b549e8e7cae41406f7ad0b6d65f9d1c8dfb1289792c240"
+  }
+}

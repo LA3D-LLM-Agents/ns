@@ -1,0 +1,25 @@
+{
+  "resource_id": "okn",
+  "revision": "53dd4c07c9ec33cd87a351a937b13626c9e895f7d59f6e7eba1f004a591e0930",
+  "queried_at": "2026-10-02T00:36:40.777781+00:00",
+  "route": "direct",
+  "tool": "get_join_strategy",
+  "result": {
+    "status": "known_non_join",
+    "verified_on": "2026-09-02",
+    "non_joins": [
+      {
+        "kg": "evoweb",
+        "result": "no public key",
+        "diagnosis": "find_crosswalks returns empty: no mapping predicates, no ontology/identifier node IRIs, no domain-predicate ids. EvoWeb (co-evolving genes) encodes its members as NCBI RefSeq PROTEIN IRIs (https://www.ncbi.nlm.nih.gov/protein/WP_xxxxxxxxx.1 - bacterial non-redundant accessions) grouped into SKOS Collections by a free-text functional label; no UniProt/Entrez/Ensembl id and no taxon. INDIRECT-BRIDGE ATTEMPTS (2026-06-18) ALL FAIL: (1) identifier-mappings carries only LINGUISTIC mappings (Latin lemmas/lila, WordNet, PropBank/Framester, Getty ULAN) - zero protein/gene content; (2) wikidata returns nothing for evoweb's WP_ accessions (bacterial non-redundant RefSeq proteins are not itemized in Wikidata); (3) ubergraph carries no protein individuals. No federation graph mirrors the WP_ RefSeq protein IRI, so there is no bridge to the UniProt protein hub. Confirmed island. NAME/LABEL ROUTE also tried 2026-06-18 and FAILS: evoweb has 7,015 distinct cluster labels (RefSeq functional product names, e.g. \"hypothetical protein\" 332k members, \"ABC transporter permease\", \"MFS transporter\", \"TetR/AcrR family transcriptional regulator\") - generic bacterial function descriptors, not protein identities. Exact case-insensitive label match to the protein KGs returns 0: prokn 0, biobricks-aopwiki 0, spoke-okn 0 (they label proteins by gene symbol or eukaryotic UniProt name, a different string namespace). ncipidkg labels proteins by gene symbol (e.g. \"Gam1\"), also no overlap. Even a fuzzy match would only collide generic family names across non-homologous proteins, not establish identity. No usable name/label join. RE-VERIFIED 2026-07-01 after the scales/oard-kg/evoweb entities.csv update added two evoweb predicates: connectedTo (Collection->Collection intra-graph cluster-network edges) and secondaryComponent (points to evoweb's OWN https://purl.org/okn/frink/kg/evoweb/schema/NNN_N_NNNN IRIs - opaque internal cluster ids, not an external catalog) - both are internal structure, neither adds an external identifier. skos:member is still the WP_ RefSeq protein accession. Fresh federated lookups of evoweb's actual WP_ accessions returned 0 in both universal hubs: wikidata P637 (RefSeq protein id) and identifier-mappings. Still a confirmed island."
+      },
+      {
+        "kg": "rdkg",
+        "attempted_key": "ClinVar VariationID (sequence variant)",
+        "result": "no partner for the variant axis",
+        "diagnosis": "rdkg models variants as 7,367 biolink:SequenceVariant nodes keyed by ClinVar VariationID (https://rdaccelerate.org/resource/CLINVAR_{id}, with biolink:id 'CLINVAR:{id}'), carrying causes_condition -> MONDO and has_gene -> NCBI Gene. NO OTHER FEDERATION KG MATERIALIZES A CLINVAR ID, so the variant axis has no partner even though three other KGs carry variants: they are all on dbSNP (biomarkerkg 147,386 rsID IRIs, prokn 68,695 rsIDs embedded in annotation prose, pankgraph 19,448 rsID literals \u2014 cluster V1-V3), and rdkg's SequenceVariant nodes carry no rsID on any predicate (their full property set is type / category / causes_condition / has_gene / id). TRAP CHECKED AND REJECTED: biomarkerkg contains the string 'clinvar' 174,674 times, which looks like a ClinVar surface but is the literal 'clinvar' as a dcterms:source provenance value \u2014 the NAME of the source database, not an identifier. BRIDGE ROUTE ALSO DEAD: the federation's wikidata subset carries ClinVar Variation ID (P1929) on just 3 items and dbSNP ID (P6861) on 538, far too thin to route 7,367 ClinVar variants onto the dbSNP cluster. rdkg still reaches the other KGs on its gene (Entrez, C5/C6/C12/C21) and disease (MONDO) axes \u2014 it is only the VARIANT axis that is isolated. Verified 2026-09-01."
+      }
+    ],
+    "note": "This pair was verified to NOT join on the attempted key \u2014 do not retry it. See each `diagnosis`."
+  }
+}

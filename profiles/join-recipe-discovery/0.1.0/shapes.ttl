@@ -1,0 +1,72 @@
+@prefix jr: <https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/vocab#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix eco: <https://la3d-llm-agents.github.io/ns/eco#> .
+
+jr:RecordShape a sh:NodeShape ; sh:targetClass jr:JoinRecord ;
+ sh:nodeKind sh:IRI ;
+ sh:not [sh:or ( [sh:class eco:Participant] [sh:class eco:ServiceEndpoint] [sh:class dcat:Dataset] [sh:class dcat:DataService] [sh:class prov:Activity] )] ;
+ sh:property [sh:path dct:identifier; sh:minCount 1; sh:maxCount 1; sh:datatype xsd:string] ;
+ sh:property [sh:path rdfs:label; sh:minCount 1; sh:maxCount 1; sh:datatype xsd:string] ;
+ sh:property [sh:path dct:description; sh:minCount 1; sh:maxCount 1; sh:datatype xsd:string] ;
+ sh:property [sh:path jr:hasParticipation; sh:minCount 2; sh:maxCount 10; sh:class jr:Participation] ;
+ sh:property [sh:path jr:hasParticipation; sh:qualifiedValueShape [sh:property [sh:path jr:role; sh:hasValue "left"]]; sh:qualifiedMinCount 1; sh:qualifiedMaxCount 1] ;
+ sh:property [sh:path jr:hasParticipation; sh:qualifiedValueShape [sh:property [sh:path jr:role; sh:hasValue "right"]]; sh:qualifiedMinCount 1; sh:qualifiedMaxCount 1] .
+jr:ParticipationShape a sh:NodeShape; sh:targetClass jr:Participation;
+ sh:property [sh:path jr:dataset; sh:minCount 1; sh:maxCount 1; sh:nodeKind sh:IRI; sh:class dcat:Dataset] ;
+ sh:property [sh:path jr:role; sh:minCount 1; sh:maxCount 1; sh:in ("left" "right" "bridge")] ;
+ sh:property [sh:path [sh:inversePath jr:hasParticipation]; sh:minCount 1; sh:maxCount 1; sh:class jr:JoinRecord] .
+jr:RecipeShape a sh:NodeShape; sh:targetClass jr:Recipe;
+ sh:not [sh:class jr:Assessment];
+ sh:property [sh:path jr:executionResource; sh:minCount 1; sh:maxCount 1; sh:class eco:Connector];
+ sh:property [sh:path jr:hasTemplate; sh:minCount 1; sh:maxCount 5; sh:class jr:QueryTemplate];
+ sh:property [sh:path jr:hasSourceAssertion; sh:minCount 1; sh:maxCount 20; sh:class jr:SourceAssertion];
+ sh:property [sh:path jr:hasObservation; sh:maxCount 20; sh:class jr:ExecutionObservation];
+ sh:sparql [sh:message "Execution resource must serve every participant"; sh:select """
+ PREFIX jr: <https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/vocab#>
+ PREFIX dcat: <http://www.w3.org/ns/dcat#>
+ SELECT $this WHERE { $this jr:executionResource ?r; jr:hasParticipation/jr:dataset ?d . FILTER NOT EXISTS { ?r dcat:servesDataset ?d } }
+ """] .
+jr:AssertionShape a sh:NodeShape; sh:targetClass jr:Assessment, jr:SourceAssertion;
+ sh:property [sh:path jr:status; sh:minCount 1; sh:maxCount 1; sh:in ("verified" "known_non_join" "unknown")];
+ sh:property [sh:path jr:scope; sh:minCount 1; sh:maxCount 1; sh:datatype xsd:string; sh:minLength 1];
+ sh:property [sh:path jr:observedAt; sh:minCount 1; sh:maxCount 1; sh:datatype xsd:dateTime];
+ sh:property [sh:path jr:payloadDigest; sh:minCount 1; sh:maxCount 1; sh:pattern "^[0-9a-f]{64}$"];
+ sh:property [sh:path jr:reportedDate; sh:maxCount 1; sh:datatype xsd:date] .
+jr:TemplateShape a sh:NodeShape; sh:targetClass jr:QueryTemplate;
+ sh:not [sh:or ([sh:class eco:Participant] [sh:class eco:ServiceEndpoint] [sh:class prov:Activity])];
+ sh:property [sh:path jr:templateDigest; sh:minCount 1; sh:maxCount 1; sh:pattern "^[0-9a-f]{64}$"];
+ sh:property [sh:path [sh:inversePath jr:hasTemplate]; sh:minCount 1; sh:maxCount 1; sh:class jr:Recipe] .
+jr:ObservationShape a sh:NodeShape; sh:targetClass jr:ExecutionObservation;
+ sh:not [sh:or ([sh:class eco:Participant] [sh:class eco:AgentSession] [sh:class eco:ServiceEndpoint])];
+ sh:property [sh:path jr:outcome; sh:minCount 1; sh:maxCount 1; sh:in ("matches_observed" "no_matches_for_query" "inconclusive")];
+ sh:property [sh:path jr:observedAt; sh:minCount 1; sh:maxCount 1; sh:datatype xsd:dateTime];
+ sh:property [sh:path [sh:inversePath jr:hasObservation]; sh:minCount 1; sh:maxCount 1; sh:class jr:Recipe];
+ sh:property [sh:path [sh:inversePath prov:wasGeneratedBy]; sh:minCount 1; sh:maxCount 1; sh:class jr:Result];
+ sh:property [sh:path prov:used; sh:qualifiedValueShape [sh:class jr:Recipe]; sh:qualifiedMinCount 1; sh:qualifiedMaxCount 1];
+ sh:property [sh:path prov:used; sh:qualifiedValueShape [sh:class jr:QueryTemplate]; sh:qualifiedMinCount 1; sh:qualifiedMaxCount 1] .
+jr:ResultShape a sh:NodeShape; sh:targetClass jr:Result;
+ sh:property [sh:path prov:wasGeneratedBy; sh:minCount 1; sh:maxCount 1; sh:class jr:ExecutionObservation];
+ sh:property [sh:path jr:payloadDigest; sh:minCount 1; sh:maxCount 1; sh:pattern "^[0-9a-f]{64}$"];
+ sh:or ( [sh:property [sh:path jr:count; sh:minCount 1; sh:maxCount 1; sh:datatype xsd:integer; sh:minInclusive 0]; sh:property [sh:path jr:unit; sh:minCount 1; sh:maxCount 1; sh:datatype xsd:string]; sh:property [sh:path jr:errorCode; sh:maxCount 0]]
+         [sh:property [sh:path jr:errorCode; sh:minCount 1; sh:maxCount 1; sh:datatype xsd:string]; sh:property [sh:path jr:count; sh:maxCount 0]; sh:property [sh:path jr:unit; sh:maxCount 0]] ) .
+jr:ObservationConsistency a sh:NodeShape; sh:targetClass jr:ExecutionObservation;
+ sh:sparql [sh:message "Execution must use its owning recipe, that recipe's template and all participant datasets"; sh:select """
+ PREFIX jr: <https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/vocab#>
+ PREFIX prov: <http://www.w3.org/ns/prov#>
+ SELECT $this WHERE {
+ { ?r jr:hasObservation $this . FILTER NOT EXISTS { $this prov:used ?r } }
+ UNION { ?r jr:hasObservation $this . $this prov:used ?t . ?t a jr:QueryTemplate . FILTER NOT EXISTS { ?r jr:hasTemplate ?t } }
+ UNION { ?r jr:hasObservation $this; jr:hasParticipation/jr:dataset ?d . FILTER NOT EXISTS { $this prov:used ?d } } }
+ """];
+ sh:sparql [sh:message "Execution outcome and result disagree"; sh:select """
+ PREFIX jr: <https://la3d-llm-agents.github.io/ns/profiles/join-recipe-discovery/0.1.0/vocab#>
+ PREFIX prov: <http://www.w3.org/ns/prov#>
+ SELECT $this WHERE {
+ { $this jr:outcome ?o . ?r prov:wasGeneratedBy $this; jr:count ?n . FILTER (?o = "inconclusive" || (?o = "matches_observed" && ?n <= 0) || (?o = "no_matches_for_query" && ?n != 0)) }
+ UNION { $this jr:outcome ?o . ?r prov:wasGeneratedBy $this; jr:errorCode ?e . FILTER (?o != "inconclusive") } }
+ """] .

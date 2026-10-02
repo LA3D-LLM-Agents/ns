@@ -1,0 +1,35 @@
+{
+  "resource_id": "okn",
+  "revision": "53dd4c07c9ec33cd87a351a937b13626c9e895f7d59f6e7eba1f004a591e0930",
+  "queried_at": "2026-10-02T00:36:20.325017+00:00",
+  "route": "direct",
+  "tool": "get_join_strategy",
+  "result": {
+    "status": "verified",
+    "verified_on": "2026-09-02",
+    "joins": [
+      {
+        "id": "Q2-drugbank-ruralkg-rdkg",
+        "left_kg": "ruralkg",
+        "left_predicate": "http://www.w3.org/2002/07/owl#sameAs (also skos:exactMatch)",
+        "left_role": "object",
+        "right_kg": "rdkg",
+        "right_predicate": "rdf:type https://w3id.org/biolink/vocab/Drug (the node IRI IS the DrugBank IRI)",
+        "right_role": "subject",
+        "shared_key": "DrugBank",
+        "key_namespace": "https://go.drugbank.com/drugs/DB{n} (ruralkg) ; http://identifiers.org/drugbank/DB{n} (rdkg)",
+        "bridge_kg": null,
+        "verified_count": 2,
+        "verified_count_note": "Exact COUNT(DISTINCT) on 2026-06-14. ruralkg has only 7 DrugBank-linked drugs (thin thread); 2 join rdkg, 0 join spoke-okn.",
+        "example_question": "Do the substance-use treatment drugs in ruralkg appear in rdkg's drug-disease graph?",
+        "example_questions": [
+          "Do the substance-use treatment drugs in ruralkg appear in rdkg's drug-disease graph?",
+          "Which two DrugBank substance-use treatment drugs from ruralkg appear in rdkg, and what diseases does rdkg attach to them?"
+        ],
+        "skeleton_query": "SELECT (COUNT(DISTINCT ?db) AS ?n) WHERE {\n  GRAPH <https://purl.org/okn/frink/kg/ruralkg> { ?s <http://www.w3.org/2002/07/owl#sameAs> ?o . FILTER(CONTAINS(STR(?o),'drugbank'))\n    BIND(IRI(CONCAT('http://identifiers.org/drugbank/',REPLACE(STR(?o),'^.*/(DB[0-9]+).*$','$1'))) AS ?db) }\n  GRAPH <https://purl.org/okn/frink/kg/rdkg> { ?db a <https://w3id.org/biolink/vocab/Drug> . }\n}",
+        "skeleton_verified": true,
+        "domain": "Chemicals"
+      }
+    ]
+  }
+}
