@@ -1,0 +1,14 @@
+{
+  "okn": {
+    "iri": "urn:llm-wiki-fabric:resource:okn",
+    "endpoint_iri": "urn:dataset-example:okn:mcp",
+    "url": "https://apps.okn.us/okn-mcp-dev/mcp",
+    "allowed_tools": [
+      "get_schema",
+      "get_kg_version",
+      "sparql_query",
+      "get_join_strategy",
+      "list_kgs"
+    ]
+  }
+}

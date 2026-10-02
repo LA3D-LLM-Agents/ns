@@ -1,0 +1,76 @@
+{
+  "query": "SELECT (COUNT(DISTINCT ?db) AS ?n) WHERE {\n  GRAPH <https://purl.org/okn/frink/kg/ruralkg> { ?s <http://www.w3.org/2002/07/owl#sameAs> ?o . FILTER(CONTAINS(STR(?o),'drugbank'))\n    BIND(IRI(CONCAT('http://identifiers.org/drugbank/',REPLACE(STR(?o),'^.*/(DB[0-9]+).*$','$1'))) AS ?db) }\n  GRAPH <https://purl.org/okn/frink/kg/rdkg> { ?db a <https://w3id.org/biolink/vocab/Drug> . }\n}",
+  "response": {
+    "resource_id": "okn",
+    "revision": "53dd4c07c9ec33cd87a351a937b13626c9e895f7d59f6e7eba1f004a591e0930",
+    "queried_at": "2026-10-01T23:48:27.330925+00:00",
+    "route": "direct",
+    "tool": "sparql_query",
+    "result": {
+      "vars": [
+        "n"
+      ],
+      "rows": [
+        {
+          "n": 2
+        }
+      ],
+      "row_count": 1
+    }
+  },
+  "inspections": {
+    "okn-rdkg": [
+      {
+        "resource_id": "okn",
+        "revision": "53dd4c07c9ec33cd87a351a937b13626c9e895f7d59f6e7eba1f004a591e0930",
+        "queried_at": "2026-10-01T23:48:06.618571+00:00",
+        "route": "direct",
+        "tool": "get_schema",
+        "result_sha256": "0b4af6722a8415afb3a8a8363d8d9af527d966317775ea674d0bcc72eb699ce4",
+        "class_count": 11,
+        "predicate_count": 21
+      },
+      {
+        "resource_id": "okn",
+        "revision": "53dd4c07c9ec33cd87a351a937b13626c9e895f7d59f6e7eba1f004a591e0930",
+        "queried_at": "2026-10-01T23:48:07.865148+00:00",
+        "route": "direct",
+        "tool": "get_kg_version",
+        "result_sha256": "d2530fdea673f24f8c335a3203f2c4bff4be4a5c7707a26b688b7eaaaf21291a",
+        "result": {
+          "shortname": "rdkg",
+          "version": "v0.0.1",
+          "last_updated": "2026-05-04T19:19:45.042+00:00",
+          "named_graph": "https://purl.org/okn/frink/kg/rdkg"
+        }
+      }
+    ],
+    "okn-ruralkg": [
+      {
+        "resource_id": "okn",
+        "revision": "53dd4c07c9ec33cd87a351a937b13626c9e895f7d59f6e7eba1f004a591e0930",
+        "queried_at": "2026-10-01T23:48:10.255070+00:00",
+        "route": "direct",
+        "tool": "get_schema",
+        "result_sha256": "85ff213e09dfce6954a03aa7b4be54e08691206a23640b14f2a23d7947e80fa0",
+        "class_count": 127,
+        "predicate_count": 55
+      },
+      {
+        "resource_id": "okn",
+        "revision": "53dd4c07c9ec33cd87a351a937b13626c9e895f7d59f6e7eba1f004a591e0930",
+        "queried_at": "2026-10-01T23:48:11.459059+00:00",
+        "route": "direct",
+        "tool": "get_kg_version",
+        "result_sha256": "e0a76226a59706c9a2f6751087fce36837e302d472c4e31a085eb16c391f4d04",
+        "result": {
+          "shortname": "ruralkg",
+          "version": "v0.2.10",
+          "last_updated": "2026-09-03T22:57:32.814+00:00",
+          "named_graph": "https://purl.org/okn/frink/kg/ruralkg"
+        }
+      }
+    ]
+  },
+  "dataset_revision": "58397ff343e34cf6c8f7f928d99769ff1bdcb402892ddd7c65ab841b651efbd3"
+}

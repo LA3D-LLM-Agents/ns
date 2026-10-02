@@ -1,0 +1,300 @@
+{
+  "profile_version": "0.1.0",
+  "coverage": "reviewed_subset",
+  "recipes": [
+    {
+      "id": "okn-ruralkg-rdkg-drugbank",
+      "iri": "urn:join-recipe:okn-ruralkg-rdkg-drugbank",
+      "label": "RuralKG\u2013RDKG DrugBank normalization",
+      "description": "Reviewed fixed owl:sameAs DrugBank COUNT query; exactMatch is mentioned upstream but not in this tested template.",
+      "tags": [
+        "DrugBank",
+        "OKN"
+      ],
+      "upstream": {
+        "resource_id": "okn",
+        "id": "Q2-drugbank-ruralkg-rdkg"
+      },
+      "participants": [
+        {
+          "role_id": "left",
+          "role": "left",
+          "dataset_id": "okn-ruralkg",
+          "iri": "https://purl.org/okn/frink/kg/ruralkg",
+          "named_graph": "https://purl.org/okn/frink/kg/ruralkg"
+        },
+        {
+          "role_id": "right",
+          "role": "right",
+          "dataset_id": "okn-rdkg",
+          "iri": "https://purl.org/okn/frink/kg/rdkg",
+          "named_graph": "https://purl.org/okn/frink/kg/rdkg"
+        }
+      ],
+      "method": {
+        "kind": "identifier_normalization",
+        "key": "DrugBank",
+        "selections": [
+          {
+            "role_id": "left",
+            "position": "object",
+            "predicates": [
+              "http://www.w3.org/2002/07/owl#sameAs"
+            ],
+            "types": [],
+            "description": "Objects whose string contains drugbank."
+          },
+          {
+            "role_id": "right",
+            "position": "subject",
+            "predicates": [],
+            "types": [
+              "https://w3id.org/biolink/vocab/Drug"
+            ],
+            "description": "Subject typed biolink:Drug."
+          }
+        ],
+        "transformations": [
+          {
+            "role_id": "left",
+            "description": "Preserve original filter and REPLACE assumptions; build identifiers.org DrugBank IRI.",
+            "expression": "IRI(CONCAT('http://identifiers.org/drugbank/',REPLACE(STR(?o),'^.*/(DB[0-9]+).*$','$1')))"
+          }
+        ]
+      },
+      "templates": [
+        {
+          "id": "drugbank-count",
+          "language": "sparql-1.1",
+          "query": "SELECT (COUNT(DISTINCT ?db) AS ?n) WHERE {\n  GRAPH <https://purl.org/okn/frink/kg/ruralkg> { ?s <http://www.w3.org/2002/07/owl#sameAs> ?o . FILTER(CONTAINS(STR(?o),'drugbank'))\n    BIND(IRI(CONCAT('http://identifiers.org/drugbank/',REPLACE(STR(?o),'^.*/(DB[0-9]+).*$','$1'))) AS ?db) }\n  GRAPH <https://purl.org/okn/frink/kg/rdkg> { ?db a <https://w3id.org/biolink/vocab/Drug> . }\n}",
+          "sha256": "68efc447ee2f3620f56352a56a5f9be1a0c2e306eba153a950b294169247924c",
+          "named_graphs": [
+            "https://purl.org/okn/frink/kg/ruralkg",
+            "https://purl.org/okn/frink/kg/rdkg"
+          ],
+          "purpose": "Count distinct normalized DrugBank identifiers shared by these selections.",
+          "measurement": {
+            "kind": "count_distinct",
+            "variable": "n",
+            "unit": "distinct normalized DrugBank identifiers"
+          }
+        }
+      ],
+      "execution_binding": {
+        "resource_id": "okn",
+        "tool_name": "sparql_query",
+        "query_argument": "query",
+        "arguments": {}
+      },
+      "provenance": {
+        "curator": "chrissweet via codex",
+        "observation": {
+          "resource_id": "okn",
+          "tool_name": "get_join_strategy",
+          "arguments": {
+            "kg_a": "ruralkg",
+            "kg_b": "rdkg"
+          },
+          "observed_at": "2026-10-02T00:36:20.325017+00:00",
+          "payload_sha256": "296fbe5dc7e91927fbcfe7a76a7893cd5fa9c4d8090de0b0d150b12fba778d18",
+          "payload": {
+            "status": "verified",
+            "verified_on": "2026-09-02",
+            "joins": [
+              {
+                "id": "Q2-drugbank-ruralkg-rdkg",
+                "left_kg": "ruralkg",
+                "left_predicate": "http://www.w3.org/2002/07/owl#sameAs (also skos:exactMatch)",
+                "left_role": "object",
+                "right_kg": "rdkg",
+                "right_predicate": "rdf:type https://w3id.org/biolink/vocab/Drug (the node IRI IS the DrugBank IRI)",
+                "right_role": "subject",
+                "shared_key": "DrugBank",
+                "key_namespace": "https://go.drugbank.com/drugs/DB{n} (ruralkg) ; http://identifiers.org/drugbank/DB{n} (rdkg)",
+                "bridge_kg": null,
+                "verified_count": 2,
+                "verified_count_note": "Exact COUNT(DISTINCT) on 2026-06-14. ruralkg has only 7 DrugBank-linked drugs (thin thread); 2 join rdkg, 0 join spoke-okn.",
+                "example_question": "Do the substance-use treatment drugs in ruralkg appear in rdkg's drug-disease graph?",
+                "example_questions": [
+                  "Do the substance-use treatment drugs in ruralkg appear in rdkg's drug-disease graph?",
+                  "Which two DrugBank substance-use treatment drugs from ruralkg appear in rdkg, and what diseases does rdkg attach to them?"
+                ],
+                "skeleton_query": "SELECT (COUNT(DISTINCT ?db) AS ?n) WHERE {\n  GRAPH <https://purl.org/okn/frink/kg/ruralkg> { ?s <http://www.w3.org/2002/07/owl#sameAs> ?o . FILTER(CONTAINS(STR(?o),'drugbank'))\n    BIND(IRI(CONCAT('http://identifiers.org/drugbank/',REPLACE(STR(?o),'^.*/(DB[0-9]+).*$','$1'))) AS ?db) }\n  GRAPH <https://purl.org/okn/frink/kg/rdkg> { ?db a <https://w3id.org/biolink/vocab/Drug> . }\n}",
+                "skeleton_verified": true,
+                "domain": "Chemicals"
+              }
+            ]
+          }
+        }
+      },
+      "source_assertions": [
+        {
+          "status": "verified",
+          "scope": "Source top-level recipe status/date; not the date of its historical count.",
+          "reported_date": "2026-09-02",
+          "note": "Exact COUNT(DISTINCT) on 2026-06-14. ruralkg has only 7 DrugBank-linked drugs (thin thread); 2 join rdkg, 0 join spoke-okn.",
+          "metric": {
+            "value": 2,
+            "unit": "distinct normalized DrugBank identifiers",
+            "reported_date": "2026-06-14"
+          }
+        }
+      ],
+      "local_observations": [
+        {
+          "id": "live-20261001-234827",
+          "template_id": "drugbank-count",
+          "template_sha256": "68efc447ee2f3620f56352a56a5f9be1a0c2e306eba153a950b294169247924c",
+          "observed_at": "2026-10-01T23:48:27.330925+00:00",
+          "outcome": "matches_observed",
+          "resource_revision": "53dd4c07c9ec33cd87a351a937b13626c9e895f7d59f6e7eba1f004a591e0930",
+          "dataset_revision": "58397ff343e34cf6c8f7f928d99769ff1bdcb402892ddd7c65ab841b651efbd3",
+          "participants": [
+            {
+              "role_id": "left",
+              "role": "left",
+              "dataset_id": "okn-ruralkg",
+              "iri": "https://purl.org/okn/frink/kg/ruralkg",
+              "named_graph": "https://purl.org/okn/frink/kg/ruralkg"
+            },
+            {
+              "role_id": "right",
+              "role": "right",
+              "dataset_id": "okn-rdkg",
+              "iri": "https://purl.org/okn/frink/kg/rdkg",
+              "named_graph": "https://purl.org/okn/frink/kg/rdkg"
+            }
+          ],
+          "versions": [
+            {
+              "dataset_id": "okn-rdkg",
+              "value": "v0.0.1",
+              "observed_at": "2026-10-01T23:48:07.865148+00:00"
+            },
+            {
+              "dataset_id": "okn-ruralkg",
+              "value": "v0.2.10",
+              "observed_at": "2026-10-01T23:48:11.459059+00:00"
+            }
+          ],
+          "schemas": [
+            {
+              "dataset_id": "okn-rdkg",
+              "observed_at": "2026-10-01T23:48:06.618571+00:00",
+              "payload_sha256": "0b4af6722a8415afb3a8a8363d8d9af527d966317775ea674d0bcc72eb699ce4"
+            },
+            {
+              "dataset_id": "okn-ruralkg",
+              "observed_at": "2026-10-01T23:48:10.255070+00:00",
+              "payload_sha256": "85ff213e09dfce6954a03aa7b4be54e08691206a23640b14f2a23d7947e80fa0"
+            }
+          ],
+          "arguments": {
+            "query": "SELECT (COUNT(DISTINCT ?db) AS ?n) WHERE {\n  GRAPH <https://purl.org/okn/frink/kg/ruralkg> { ?s <http://www.w3.org/2002/07/owl#sameAs> ?o . FILTER(CONTAINS(STR(?o),'drugbank'))\n    BIND(IRI(CONCAT('http://identifiers.org/drugbank/',REPLACE(STR(?o),'^.*/(DB[0-9]+).*$','$1'))) AS ?db) }\n  GRAPH <https://purl.org/okn/frink/kg/rdkg> { ?db a <https://w3id.org/biolink/vocab/Drug> . }\n}"
+          },
+          "response": {
+            "vars": [
+              "n"
+            ],
+            "rows": [
+              {
+                "n": 2
+              }
+            ],
+            "row_count": 1
+          },
+          "response_sha256": "292daaf17099b17db12249f8fcb9226106288fe72fdc77d991c75f7f1c94d0fc",
+          "metric": {
+            "value": 2,
+            "unit": "distinct normalized DrugBank identifiers"
+          }
+        }
+      ]
+    }
+  ],
+  "assessments": [
+    {
+      "id": "synthetic-known-non-join",
+      "iri": "urn:join-assessment:synthetic-known_non_join",
+      "label": "SYNTHETIC known_non_join",
+      "description": "Synthetic status fixture only; not live evidence.",
+      "participants": [
+        {
+          "role_id": "left",
+          "role": "left",
+          "dataset_id": "okn-ruralkg",
+          "iri": "https://purl.org/okn/frink/kg/ruralkg",
+          "named_graph": "https://purl.org/okn/frink/kg/ruralkg"
+        },
+        {
+          "role_id": "right",
+          "role": "right",
+          "dataset_id": "okn-rdkg",
+          "iri": "https://purl.org/okn/frink/kg/rdkg",
+          "named_graph": "https://purl.org/okn/frink/kg/rdkg"
+        }
+      ],
+      "scope": "Synthetic method unavailable in example; no graph-wide conclusion.",
+      "status": "known_non_join",
+      "curator": "synthetic fixture",
+      "source": {
+        "resource_id": "okn",
+        "tool_name": "get_join_strategy",
+        "arguments": {
+          "kg_a": "ruralkg",
+          "kg_b": "rdkg"
+        },
+        "observed_at": "2026-10-02T00:36:20.325017+00:00",
+        "payload_sha256": "1cac13e14eca097dc5192d3ff82bde19a1a6e05b47306b2ecaa05d8b93ece2ec",
+        "payload": {
+          "status": "known_non_join",
+          "note": "SYNTHETIC fixture, not an upstream finding about RuralKG\u2013RDKG.",
+          "non_joins": [
+            {
+              "diagnosis": "Synthetic test scope only"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "synthetic-unknown",
+      "iri": "urn:join-assessment:synthetic-unknown",
+      "label": "SYNTHETIC unknown",
+      "description": "Synthetic status fixture only; not live evidence.",
+      "participants": [
+        {
+          "role_id": "left",
+          "role": "left",
+          "dataset_id": "okn-ruralkg",
+          "iri": "https://purl.org/okn/frink/kg/ruralkg",
+          "named_graph": "https://purl.org/okn/frink/kg/ruralkg"
+        },
+        {
+          "role_id": "right",
+          "role": "right",
+          "dataset_id": "okn-rdkg",
+          "iri": "https://purl.org/okn/frink/kg/rdkg",
+          "named_graph": "https://purl.org/okn/frink/kg/rdkg"
+        }
+      ],
+      "scope": "Synthetic method unavailable in example; no graph-wide conclusion.",
+      "status": "unknown",
+      "curator": "synthetic fixture",
+      "source": {
+        "resource_id": "okn",
+        "tool_name": "get_join_strategy",
+        "arguments": {
+          "kg_a": "ruralkg",
+          "kg_b": "rdkg"
+        },
+        "observed_at": "2026-10-02T00:36:20.325017+00:00",
+        "payload_sha256": "d6af39bf94be8c5f0349c198a923b9a75412522320d41d9a0fcecb254ab44aa9",
+        "payload": {
+          "status": "unknown",
+          "note": "SYNTHETIC fixture, not an upstream finding about RuralKG\u2013RDKG."
+        }
+      }
+    }
+  ]
+}

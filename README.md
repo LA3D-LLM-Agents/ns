@@ -204,3 +204,11 @@ core ontology aliases or release files. Synthetic RuralKG/RDKG fixtures and an
 offline reference adapter demonstrate one service exposing two datasets, with
 explicit provenance and parameterized inspection metadata retained in JSON.
 Run `python tests/datasets.py` after installing tests/requirements.txt.
+
+## Join-recipe discovery profile
+
+[Join-recipe discovery 0.1.0](profiles/join-recipe-discovery/0.1.0/README.md)
+adds an independently versioned contract for plans, scoped source assessments and
+execution observations. It reuses dataset identities without changing eco or the
+published dataset profile. [Examples and evidence](examples/join-recipes/README.md)
+distinguish actual source metadata, historical execution and synthetic test cases.

@@ -1,0 +1,56 @@
+[
+  {
+    "name": "get_join_strategy",
+    "description": "Look up a PRECOMPUTED, verified recipe for joining two KGs.\n\n    Call this FIRST whenever a question spans two graphs \u2014 BEFORE `find_crosswalks`\n    and before writing any federated join query. `find_crosswalks` discovers join\n    keys live and frequently times out on large graphs; this serves a curated,\n    hand-verified table (exact `COUNT(DISTINCT)` over the named graphs on\n    `verified_on`) instead, so it is fast and reliable. It tells you not just THAT\n    two KGs join but exactly HOW: the predicates and roles on each side, the shared\n    identifier and its namespace, any bridge graph, and \u2014 critically \u2014 a runnable\n    `skeleton_query`: a verified, minimal `COUNT(DISTINCT <shared key>)` join that\n    already applies every IRI rewrite (the same id often appears in 2-3 IRI forms,\n    so a naive join silently returns nothing). Start from that query \u2014 actually\n    RUN it (non-exploratory, so it lands in the transcript) to confirm the key\n    still joins, then extend that same query with your own payload instead of\n    rebuilding the boilerplate. Do NOT decompose the join into separate\n    exploratory lookups, read an id off one, and hard-code it as a constant IRI:\n    that is the join the whole cross-KG claim rests on, so the query that\n    establishes it must be logged \u2014 otherwise the transcript can't reproduce its\n    own headline result.\n\n    Args:\n        kg_a: a KG shortname (as from `list_kgs`).\n        kg_b: optional second shortname. Omit to list everything `kg_a` can join.\n\n    Returns (kg_b given) one of:\n      * `{\"status\": \"verified\", \"joins\": [recipe, ...]}` \u2014 apply the recipe.\n        Each recipe carries `left_kg/right_kg`, `left_predicate/right_predicate`\n        (`\"node-iri\"` means the id IS the entity's own IRI \u2014 join directly on it),\n        `left_role/right_role`, `shared_key`, `key_namespace`, `bridge_kg`,\n        `domain`, `verified_count`, `example_question`, and a runnable\n        `skeleton_query` \u2014 the example SPARQL to copy and build on (it encodes the\n        IRI-normalization, so no separate prose recipe is returned).\n        `skeleton_verified: true` means it reproduced `verified_count` exactly when\n        last run on `verified_on`. When two recipes link the same entity through\n        different identifiers (e.g. direct MONDO AND an OMIM bridge), each carries\n        a `complementary_note` and a top-level `note` flags that they are\n        COMPLEMENTARY \u2014 UNION them for complete coverage rather than picking one.\n      * `{\"status\": \"known_non_join\", \"non_joins\": [...]}` \u2014 this pair was CHECKED\n        and does not join on the obvious key. Do NOT attempt it; read `diagnosis`.\n      * `{\"status\": \"unknown\", ...}` \u2014 nothing precomputed. Fall back to\n        `find_crosswalks(kg_a)` / `find_crosswalks(kg_b)` to discover a key live.\n    Returns (kg_b omitted) `{\"shortname\", \"joins\": [...], \"island\": {...}|None,\n    \"known_non_joins\": [...]}` \u2014 every verified join touching `kg_a`, the `joins`\n    grouped by `domain` (sorted by `(domain, shared_key)`) like `list_crosswalks`.\n\n    `island`/`known_non_join` context is included whenever present so you can tell\n    apart \"not yet profiled\" from \"verified to share no key\". `verified_on` dates\n    every answer so staleness is visible.\n    ",
+    "inputSchema": {
+      "properties": {
+        "kg_a": {
+          "title": "Kg A",
+          "type": "string"
+        },
+        "kg_b": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kg B"
+        }
+      },
+      "required": [
+        "kg_a"
+      ],
+      "title": "get_join_strategyArguments",
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "title": "get_join_strategyDictOutput",
+      "type": "object"
+    }
+  },
+  {
+    "name": "list_crosswalks",
+    "description": "List EVERY precomputed cross-KG integration point in one call.\n\n    The federation ships a curated, hand-verified table of join recipes between\n    knowledge graphs. `get_join_strategy` narrows it to one KG or one pair; this\n    returns the whole map at once, so you can discover which graphs connect \u2014\n    and on what shared identifier \u2014 without knowing the pair in advance. Each row\n    is a compact summary; call `get_join_strategy(kg_a, kg_b)` for a pair's full\n    recipe (predicates, roles, IRI-normalization snippet, counts).\n\n    Args:\n        include_examples: when True (default), each row carries an\n            `example_question` describing what the join answers. Set False for a\n            more compact listing.\n\n    Returns:\n        `{\"verified_on\", \"count\", \"crosswalks\": [...], \"taxon_clade_note\"?}`. Rows\n        are sorted by `(domain, shared_key)`, so the list reads as a table grouped\n        by `domain` (e.g. \"Genes\", \"Geospatial\", \"Disease & phenotype\") and ordered\n        by ontology within each \u2014 render it directly as such. `kgs` lists every KG\n        the join touches in join order (left \u2192 bridge \u2192 right), each an official\n        registry shortname usable directly with `describe_kg`/`get_schema`/`query`.\n        Most rows carry a single `verified_count`; `verified_on` dates the counts.\n\n        The NCBITaxon crosswalks are a hub (each KG joins `ubergraph`); rather than\n        list each KG's overlap with that plumbing, the listing shows ONE row PER\n        non-zero KG pair, composed through the hub (`kgs: [kg_a, \"ubergraph\",\n        kg_b]`, `bridge_kg: \"ubergraph\"`, `hub: \"ubergraph\"`). These rows have NO\n        single `verified_count`; the overlap is two-valued \u2014 `exact_id` (taxa with\n        the same NCBITaxon id, symmetric) plus directional `clade_a_in_b` /\n        `clade_b_in_a` (taxa nested under the other KG's clades via `subClassOf*`,\n        often far larger). Some Taxonomy rows are instead LABEL-BRIDGED\n        (`match_type: \"label\"`): biohealth carries no NCBITaxon id, so its organisms\n        are matched to the other KG by exact scientific name, and the row carries\n        `label_match` / `kg_b_taxa` (NOT `exact_id`/clade) \u2014 render these as\n        \"label match: <label_match> of <kg_b_taxa> organisms by name\". Do NOT drop a\n        Taxonomy row just because it lacks the id columns. When the result includes\n        Taxonomy rows it also carries a top-level `taxon_clade_note`: RENDER IT as a\n        short paragraph AFTER the table so the reader understands both the id columns\n        and the label rows. `taxon_overlap(kg_a, kg_b)` returns the runnable\n        skeletons.\n\n        Rows where `ubergraph` is a bare endpoint (a KG's overlap with the ontology\n        backbone, not a KG-to-KG join \u2014 e.g. oard-kg's MONDO terms, biobricks-mesh's\n        MeSH terms) are omitted from this listing; they remain available via\n        `get_join_strategy` and are what inline `subClassOf*` category expansion\n        uses. In the listing ubergraph appears only as a bridge (middle of `kgs`).\n    ",
+    "inputSchema": {
+      "properties": {
+        "include_examples": {
+          "default": true,
+          "title": "Include Examples",
+          "type": "boolean"
+        }
+      },
+      "title": "list_crosswalksArguments",
+      "type": "object"
+    },
+    "outputSchema": {
+      "additionalProperties": true,
+      "title": "list_crosswalksDictOutput",
+      "type": "object"
+    }
+  }
+]

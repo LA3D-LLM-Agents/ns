@@ -1,0 +1,66 @@
+{
+  "resource_id": "okn",
+  "revision": "53dd4c07c9ec33cd87a351a937b13626c9e895f7d59f6e7eba1f004a591e0930",
+  "queried_at": "2026-10-02T00:36:21.436873+00:00",
+  "route": "direct",
+  "tool": "get_join_strategy",
+  "result": {
+    "status": "verified",
+    "verified_on": "2026-09-02",
+    "joins": [
+      {
+        "id": "J2-zip",
+        "left_kg": "spoke-okn",
+        "left_predicate": "http://www.w3.org/2000/01/rdf-schema#label (bare ZIP, on .../location/{STATE}-{ZIP} node)",
+        "left_role": "object",
+        "right_kg": "ruralkg",
+        "right_predicate": "https://schema.org/postalCode",
+        "right_role": "object",
+        "shared_key": "ZIP5",
+        "key_namespace": "bare 5-digit U.S. ZIP code, xsd:string literal (no IRI namespace)",
+        "bridge_kg": null,
+        "verified_count": 5390,
+        "verified_count_secondary": {
+          "spoke-okn_distinct_zips": 42724,
+          "ruralkg_distinct_zips": 4938
+        },
+        "hinge_note": "ALL 4,938 of ruralkg's ZIPs are present in spoke-okn (full containment). Separately ruralkg carries censusCounty as KWG administrativeRegion.USA.{FIPS}, so it also meets spoke-okn at the county level (see K2) and bridges to the spatialkg hub.",
+        "example_question": "Combine spoke-okn ZIP-level context with ruralkg rural health/justice indicators for the same ZIP, and roll up to county via ruralkg's KWG censusCounty.",
+        "example_questions": [
+          "Combine spoke-okn ZIP-level context with ruralkg rural health/justice indicators for the same ZIP, and roll up to county via ruralkg's KWG censusCounty.",
+          "For a rural ZIP flagged by ruralkg's health indicators, what spoke-okn environmental context applies at the same ZIP5?"
+        ],
+        "skeleton_query": "SELECT (COUNT(DISTINCT ?zip) AS ?n) WHERE {\n  { SELECT DISTINCT ?zip WHERE { GRAPH <https://purl.org/okn/frink/kg/ruralkg> {\n      BIND(IRI(CONCAT('https://schema.org/','postalCode')) AS ?pp)\n      ?b ?pp ?z0 . }\n      BIND(REPLACE(STR(?z0),'[^0-9]','') AS ?d)\n      BIND(IF(STRLEN(?d)=4, CONCAT('0',?d), SUBSTR(?d,1,5)) AS ?zip) } }\n  GRAPH <https://purl.org/okn/frink/kg/spoke-okn> { ?loc <http://www.w3.org/2000/01/rdf-schema#label> ?zip .\n      FILTER(REGEX(STR(?loc),'/location/[A-Z]{2}-[0-9]+')) }\n}",
+        "skeleton_verified": true,
+        "verified_count_note": "Count CORRECTED 4,938 -> 5,390 and skeleton optimized, 2026-07-12. The published query matched ruralkg's postalCode literal RAW against spoke-okn's ZIP label. ruralkg stores New England ZIPs as 4 digits with the leading zero dropped (and a trailing space) - e.g. '1002 ' for 01002 Amherst MA - so those silently never matched. Stripping non-digits and left-padding to 5 recovers 452 more ZIPs. (Confirmed the delta is exactly the padding: without it the query still returns the old 4,938.) Same class of bug as the sawgraph undashed-CAS undercount. The query also now drives from ruralkg's postalCode (bound via IRI(CONCAT) - ruralkg stores the HTTPS schema.org IRI) instead of scanning spoke-okn. ",
+        "domain": "Geospatial"
+      },
+      {
+        "id": "K2-county-fips",
+        "left_kg": "spoke-okn",
+        "left_predicate": "node-iri (.../location/{FIPS5})",
+        "left_role": "subject",
+        "right_kg": "ruralkg",
+        "right_predicate": "http://sail.ua.edu/ruralkg/settlementtype/censusCounty",
+        "right_role": "object",
+        "shared_key": "county_FIPS",
+        "key_namespace": "http://stko-kwg.geog.ucsb.edu/lod/resource/administrativeRegion.USA. (rebuilt) ; bare 5-digit county FIPS in spoke-okn",
+        "bridge_kg": null,
+        "verified_count": 3196,
+        "verified_count_secondary": {
+          "spoke-okn_county_nodes": 3196
+        },
+        "hinge_note": "All 3,196 spoke-okn county nodes are present in ruralkg's censusCounty set; ruralkg's national county coverage fully contains spoke-okn's. ruralkg thus bridges spoke-okn county data to its rural health/justice indicators and (via the shared KWG county form) onward to the spatialkg hub.",
+        "example_question": "Join spoke-okn county-level environmental/health rollups with ruralkg rural-resilience (health + justice) indicators for the same county FIPS.",
+        "example_questions": [
+          "Join spoke-okn county-level environmental/health rollups with ruralkg rural-resilience (health + justice) indicators for the same county FIPS.",
+          "Which counties show both weak ruralkg rural-resilience justice indicators and elevated spoke-okn environmental burden at the same county FIPS?"
+        ],
+        "skeleton_query": "SELECT (COUNT(DISTINCT ?fips) AS ?n) WHERE {\n  { SELECT DISTINCT ?fips WHERE { GRAPH <https://purl.org/okn/frink/kg/ruralkg> {\n      ?x <http://sail.ua.edu/ruralkg/settlementtype/censusCounty> ?reg . }\n      FILTER(STRSTARTS(STR(?reg),'http://stko-kwg.geog.ucsb.edu/lod/resource/administrativeRegion.USA.'))\n      BIND(REPLACE(STR(?reg),'^.*administrativeRegion[.]USA[.]([0-9]{5}).*$','$1') AS ?fips)\n      FILTER(REGEX(?fips,'^[0-9]{5}$')) } }\n  BIND(IRI(CONCAT('https://purl.org/okn/frink/kg/spoke-okn/location/', ?fips)) AS ?loc)\n  GRAPH <https://purl.org/okn/frink/kg/spoke-okn> { ?loc ?p ?o . }\n}",
+        "skeleton_verified": true,
+        "verified_count_note": "Skeleton OPTIMIZED 2026-07-12: the published query scanned an entire graph with an unbound pattern (?s ?p ?o) and then regex-filtered the subject IRI, which exceeded the endpoint's server-side operation limit (HTTP 429) and so could never be re-verified. Rewritten to drive from the SMALL, TYPED side as a DISTINCT sub-SELECT and construct the other graph's IRI, turning the full scan into an index lookup. Same count, now runnable. Drives from ruralkg's censusCounty KWG IRIs. ",
+        "domain": "Geospatial"
+      }
+    ]
+  }
+}
