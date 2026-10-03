@@ -195,20 +195,20 @@ establish structural mapping behavior, not successful enrollment, authentication
 live A2A execution or a deployed fabric migration.
 
 
-## Dataset discovery profile proposal
+## Historical profiles — outside supported fabric discovery
 
-[Dataset discovery 0.1.0](profiles/dataset-discovery/0.1.0/README.md) adds a
-separate JSON Schema and supplementary SHACL profile for scientific datasets
-served by existing connectors. It reuses DCAT and eco 0.3.0 without changing
-core ontology aliases or release files. Synthetic RuralKG/RDKG fixtures and an
-offline reference adapter demonstrate one service exposing two datasets, with
-explicit provenance and parameterized inspection metadata retained in JSON.
-Run `python tests/datasets.py` after installing tests/requirements.txt.
+The supported fabric discovery baseline is eco 0.3.0, including agent cards and
+inverse relationships (commit `7650c27`). The later dataset and join-recipe
+profiles were withdrawn from the supported fabric architecture on 2026-10-03.
+The fabric is a lightweight discovery layer; source inventories, schemas, query
+plans and execution remain owned by external providers and their clients.
 
-## Join-recipe discovery profile
+These published artifacts retain their original bytes and URLs for historical
+references. Their examples, adapters and validation tests are archival material,
+not a recommendation to introduce local dataset or recipe registries:
 
-[Join-recipe discovery 0.1.0](profiles/join-recipe-discovery/0.1.0/README.md)
-adds an independently versioned contract for plans, scoped source assessments and
-execution observations. It reuses dataset identities without changing eco or the
-published dataset profile. [Examples and evidence](examples/join-recipes/README.md)
-distinguish actual source metadata, historical execution and synthetic test cases.
+- [Dataset discovery 0.1.0](profiles/dataset-discovery/0.1.0/README.md)
+- [Join-recipe discovery 0.1.0](profiles/join-recipe-discovery/0.1.0/README.md)
+
+Artifact validation remains in CI to protect published references; it does not
+make these profiles part of the supported discovery contract.
